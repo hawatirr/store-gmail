@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SosmedStore — Premium Digital Goods</title>
+    <title>SosmedStore — Gmail Specialist</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -13,22 +13,21 @@
             overflow-x: hidden;
         }
 
-        /* Dekorasi latar belakang agar efek kaca terlihat nyata */
         .blob {
             position: absolute;
-            width: 500px;
-            height: 500px;
+            width: 600px;
+            height: 600px;
             background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
-            filter: blur(80px);
+            filter: blur(100px);
             border-radius: 50%;
             z-index: -1;
-            opacity: 0.2;
+            opacity: 0.15;
         }
 
         .glass {
             background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
@@ -37,105 +36,78 @@
         }
 
         .product-card:hover {
-            transform: translateY(-10px);
-            background: rgba(255, 255, 255, 0.07);
-            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-12px);
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(59, 130, 246, 0.5);
         }
     </style>
 </head>
-<body class="text-white">
+<body class="text-white min-height-screen flex flex-col">
 
-    <div class="blob top-[-10%] left-[-10%]"></div>
-    <div class="blob bottom-[-10%] right-[-10%] bg-blue-400"></div>
+    <div class="blob top-[-15%] left-[-10%]"></div>
+    <div class="blob bottom-[-15%] right-[-10%] bg-blue-500"></div>
 
-    <nav class="container mx-auto px-6 py-8 flex justify-between items-center">
+    <nav class="container mx-auto px-8 py-8 flex justify-between items-center">
         <div class="text-2xl font-extrabold tracking-tighter">
-            SOSMED<span class="text-blue-500">.STORE</span>
+            GMAIL<span class="text-blue-500">STORE</span>
         </div>
-        <div class="hidden md:flex space-x-8 text-sm font-medium opacity-60">
-            <a href="#" class="hover:opacity-100 transition">Beranda</a>
-            <a href="#" class="hover:opacity-100 transition">Katalog</a>
-            <a href="#" class="hover:opacity-100 transition">Testimoni</a>
-        </div>
-        <button class="glass px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-black transition duration-300">
+        <button class="glass px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-white hover:text-black transition duration-300">
             Cek Pesanan
         </button>
     </nav>
 
-    <header class="container mx-auto px-6 pt-16 pb-24 text-center">
-        <h1 class="text-5xl md:text-7xl font-extrabold mb-6 tracking-tight">
-            Akun Premium. <br>
-            <span class="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">Kirim Otomatis.</span>
+    <header class="container mx-auto px-6 pt-20 pb-16 text-center">
+        <h1 class="text-5xl md:text-6xl font-extrabold mb-6 tracking-tight">
+            Gmail Berkualitas. <br>
+            <span class="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">Instan & Terpercaya.</span>
         </h1>
-        <p class="max-w-2xl mx-auto text-slate-400 text-lg md:text-xl font-light leading-relaxed">
-            Dapatkan akses instan ke akun sosial media berkualitas tinggi. Aman, bergaransi, dan didukung pembayaran Binance ID secara real-time.
+        <p class="max-w-xl mx-auto text-slate-400 text-lg font-light">
+            Menyediakan akun Gmail Fresh dan Old untuk kebutuhan bisnis, marketing, dan verifikasi Anda.
         </p>
     </header>
 
-    <section class="container mx-auto px-6 pb-32">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <section class="container mx-auto px-6 max-w-5xl pb-32">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
             
-            <div class="product-card glass rounded-[32px] p-8 relative overflow-hidden">
-                <div class="flex justify-between items-start mb-12">
-                    <div class="bg-blue-500/20 p-3 rounded-2xl">
-                        <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+            <div class="product-card glass rounded-[40px] p-10 relative overflow-hidden">
+                <div class="flex justify-between items-start mb-16">
+                    <div class="bg-blue-500/20 p-4 rounded-2xl">
+                        <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
                     </div>
-                    <span class="text-[10px] font-bold tracking-widest uppercase opacity-40">Ready Stock</span>
+                    <span class="text-[10px] font-bold tracking-widest uppercase py-1 px-3 glass rounded-full opacity-70">Baru Dibuat</span>
                 </div>
                 
-                <h3 class="text-2xl font-bold mb-2">Instagram PVA</h3>
-                <p class="text-sm text-slate-400 mb-8 leading-relaxed">Akun verifikasi nomor telepon. Umur 1 bulan+. Cocok untuk branding atau jualan.</p>
+                <h3 class="text-3xl font-bold mb-3">Gmail Fresh</h3>
+                <p class="text-slate-400 mb-10 leading-relaxed">Akun Gmail baru dengan verifikasi nomor hp. Bersih, belum pernah digunakan untuk platform apapun.</p>
                 
-                <div class="flex justify-between items-center">
+                <div class="flex justify-between items-center pt-6 border-t border-white/5">
                     <div>
-                        <span class="block text-[10px] uppercase opacity-40 font-bold mb-1">Harga</span>
-                        <span class="text-2xl font-extrabold">2.50 <span class="text-sm font-normal opacity-60">USDT</span></span>
+                        <span class="block text-[10px] uppercase opacity-40 font-bold mb-1">Harga Satuan</span>
+                        <span class="text-3xl font-extrabold">0.50 <span class="text-sm font-normal opacity-60 ml-1">USDT</span></span>
                     </div>
-                    <button class="bg-white text-black px-8 py-3 rounded-2xl font-bold text-sm hover:bg-blue-500 hover:text-white transition duration-300 shadow-xl shadow-white/5">
+                    <button class="bg-blue-500 text-white px-10 py-4 rounded-2xl font-bold text-sm hover:bg-blue-600 transition duration-300 shadow-lg shadow-blue-500/20">
                         Beli
                     </button>
                 </div>
             </div>
 
-            <div class="product-card glass rounded-[32px] p-8 relative overflow-hidden border-blue-500/30">
-                <div class="flex justify-between items-start mb-12">
-                    <div class="bg-purple-500/20 p-3 rounded-2xl">
-                        <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 00-2 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            <div class="product-card glass rounded-[40px] p-10 relative overflow-hidden border-indigo-500/20">
+                <div class="flex justify-between items-start mb-16">
+                    <div class="bg-indigo-500/20 p-4 rounded-2xl">
+                        <svg class="w-8 h-8 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
-                    <span class="text-[10px] font-bold tracking-widest uppercase text-blue-400">Best Seller</span>
+                    <span class="text-[10px] font-bold tracking-widest uppercase py-1 px-3 glass rounded-full text-indigo-300">Stok Terbatas</span>
                 </div>
                 
-                <h3 class="text-2xl font-bold mb-2">Netflix 1 Bulan</h3>
-                <p class="text-sm text-slate-400 mb-8 leading-relaxed">Shared account, durasi 30 hari penuh. Anti on-hold dan bergaransi.</p>
+                <h3 class="text-3xl font-bold mb-3">Gmail Old</h3>
+                <p class="text-slate-400 mb-10 leading-relaxed">Akun tahun 2021 - 2023. Lebih kuat untuk aktivitas marketing berat dan verifikasi platform luar negeri.</p>
                 
-                <div class="flex justify-between items-center">
+                <div class="flex justify-between items-center pt-6 border-t border-white/5">
                     <div>
-                        <span class="block text-[10px] uppercase opacity-40 font-bold mb-1">Harga</span>
-                        <span class="text-2xl font-extrabold">3.00 <span class="text-sm font-normal opacity-60">USDT</span></span>
+                        <span class="block text-[10px] uppercase opacity-40 font-bold mb-1">Harga Satuan</span>
+                        <span class="text-3xl font-extrabold">1.20 <span class="text-sm font-normal opacity-60 ml-1">USDT</span></span>
                     </div>
-                    <button class="bg-white text-black px-8 py-3 rounded-2xl font-bold text-sm hover:bg-purple-500 hover:text-white transition duration-300 shadow-xl shadow-white/5">
-                        Beli
-                    </button>
-                </div>
-            </div>
-
-            <div class="product-card glass rounded-[32px] p-8 relative overflow-hidden">
-                <div class="flex justify-between items-start mb-12">
-                    <div class="bg-green-500/20 p-3 rounded-2xl">
-                        <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                    </div>
-                    <span class="text-[10px] font-bold tracking-widest uppercase opacity-40">Fast Move</span>
-                </div>
-                
-                <h3 class="text-2xl font-bold mb-2">TikTok Aged</h3>
-                <p class="text-sm text-slate-400 mb-8 leading-relaxed">Akun lawas tahun 2021-2022. Lebih tahan banned untuk aktivitas marketing.</p>
-                
-                <div class="flex justify-between items-center">
-                    <div>
-                        <span class="block text-[10px] uppercase opacity-40 font-bold mb-1">Harga</span>
-                        <span class="text-2xl font-extrabold">4.50 <span class="text-sm font-normal opacity-60">USDT</span></span>
-                    </div>
-                    <button class="bg-white text-black px-8 py-3 rounded-2xl font-bold text-sm hover:bg-green-500 hover:text-white transition duration-300 shadow-xl shadow-white/5">
+                    <button class="bg-white text-black px-10 py-4 rounded-2xl font-bold text-sm hover:bg-indigo-500 hover:text-white transition duration-300 shadow-lg shadow-white/10">
                         Beli
                     </button>
                 </div>
@@ -144,8 +116,8 @@
         </div>
     </section>
 
-    <footer class="container mx-auto px-6 py-12 border-t border-white/5 text-center text-sm opacity-40 font-light">
-        &copy; 2026 SOSMED.STORE. Semua transaksi aman via Binance Pay.
+    <footer class="mt-auto container mx-auto px-6 py-10 border-t border-white/5 text-center text-xs opacity-30 tracking-widest uppercase">
+        &copy; 2026 GMAIL.STORE — Automated Crypto Payment
     </footer>
 
 </body>
