@@ -3,104 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Admin - GMAIL.STORE</title>
+    <title>GMAIL.STORE — Manager Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { background: #070b14; color: white; font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .sidebar { width: 260px; height: 100vh; position: fixed; left: 0; top: 0; }
+        .main-content { margin-left: 260px; padding: 40px; }
+        @media (max-width: 768px) { .sidebar { display: none; } .main-content { margin-left: 0; padding: 20px; } }
+    </style>
 </head>
-<body class="bg-slate-900 text-slate-200">
-    <nav class="bg-slate-800 border-b border-slate-700 p-4">
-        <div class="container mx-auto flex justify-between items-center">
-            <h1 class="font-bold text-xl uppercase tracking-tighter">Admin <span class="text-blue-500">Panel</span></h1>
-            <button onclick="logout()" class="text-xs bg-red-500/10 text-red-500 px-4 py-2 rounded-lg border border-red-500/20">Logout</button>
-        </div>
-    </nav>
+<body>
 
-    <div class="container mx-auto p-6">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700">
-                <p class="text-xs text-slate-400 uppercase font-bold">Total Stock</p>
-                <p id="stat-total" class="text-2xl font-black">0</p>
-            </div>
-            <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700">
-                <p class="text-xs text-slate-400 uppercase font-bold">Success Orders</p>
-                <p id="stat-success" class="text-2xl font-black">0</p>
-            </div>
-        </div>
+    <aside class="sidebar glass p-6 hidden md:block">
+        <h2 class="text-xl font-bold mb-10 tracking-tighter text-blue-400">ADMIN.PANEL</h2>
+        <nav class="space-y-4">
+            <a href="#" class="block p-3 glass rounded-xl text-sm font-bold">Dashboard</a>
+            <a href="#" class="block p-3 hover:bg-white/5 rounded-xl text-sm opacity-60">Manage Stock</a>
+            <a href="#" class="block p-3 hover:bg-white/5 rounded-xl text-sm opacity-60">Order History</a>
+            <a href="#" class="block p-3 hover:bg-white/5 rounded-xl text-sm opacity-60">Settings</a>
+        </nav>
+        <button onclick="logout()" class="absolute bottom-10 left-6 text-red-400 text-xs font-bold uppercase tracking-widest">Sign Out</button>
+    </aside>
 
-        <div class="bg-slate-800 p-6 rounded-[32px] border border-slate-700 mb-8">
-            <h2 class="text-xl font-bold mb-4">Add New Accounts</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <select id="acc-type" class="bg-slate-900 border border-slate-700 rounded-xl p-3">
-                    <option value="Fresh">Gmail Fresh</option>
-                    <option value="Aged">Gmail Aged</option>
-                </select>
-                <input id="acc-data" type="text" placeholder="Format: email|pass|recovery" class="bg-slate-900 border border-slate-700 rounded-xl p-3 col-span-1 md:col-span-2">
+    <main class="main-content">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <div class="glass p-6 rounded-[32px]">
+                <p class="text-[10px] uppercase opacity-40 font-bold mb-2">Available Stock</p>
+                <h3 id="stat-stock" class="text-4xl font-black">0</h3>
             </div>
-            <button onclick="addStock()" class="mt-4 bg-blue-600 w-full py-3 rounded-xl font-bold hover:bg-blue-500 transition">Push to Database</button>
+            <div class="glass p-6 rounded-[32px]">
+                <p class="text-[10px] uppercase opacity-40 font-bold mb-2">Total Sales</p>
+                <h3 id="stat-sales" class="text-4xl font-black text-emerald-400">$0.00</h3>
+            </div>
+            <div class="glass p-6 rounded-[32px]">
+                <p class="text-[10px] uppercase opacity-40 font-bold mb-2">Total Users</p>
+                <h3 id="stat-users" class="text-4xl font-black text-blue-400">0</h3>
+            </div>
         </div>
 
-        <div class="bg-slate-800 rounded-[32px] border border-slate-700 overflow-hidden">
-            <table class="w-full text-left">
-                <thead class="bg-slate-700/50 text-xs uppercase opacity-60">
-                    <tr>
-                        <th class="p-4">Type</th>
-                        <th class="p-4">Credentials</th>
-                        <th class="p-4">Status</th>
-                        <th class="p-4">Action</th>
-                    </tr>
-                </thead>
-                <tbody id="inventory-table">
-                    </tbody>
-            </table>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+            <div class="lg:col-span-1 glass p-8 rounded-[40px]">
+                <h4 class="text-lg font-bold mb-6">Add New Account</h4>
+                <div class="space-y-4">
+                    <select id="acc-type" class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm focus:outline-none focus:border-blue-500">
+                        <option value="Fresh">Gmail Fresh</option>
+                        <option value="Aged">Gmail Aged</option>
+                    </select>
+                    <textarea id="acc-data" rows="4" placeholder="email|pass|recovery (One per line)" class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm focus:outline-none"></textarea>
+                    <button onclick="addBulkStock()" class="w-full bg-blue-600 py-4 rounded-2xl font-bold shadow-lg shadow-blue-500/20 hover:bg-blue-500 transition">Add To Inventory</button>
+                </div>
+            </div>
+
+            <div class="lg:col-span-2 glass p-8 rounded-[40px]">
+                <h4 class="text-lg font-bold mb-6">Recent Inventory</h4>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="opacity-30 border-b border-white/5">
+                            <tr>
+                                <th class="pb-4">Category</th>
+                                <th class="pb-4">Credentials</th>
+                                <th class="pb-4">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventory-list" class="divide-y divide-white/5">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-    </div>
+    </main>
 
     <script>
-        const SUPABASE_URL = 'https://URL_PROJECT.supabase.co';
-        const SUPABASE_KEY = 'ANON_KEY';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // Supabase Init (Ganti dengan API Key Anda)
+        const supabaseClient = supabase.createClient('URL_PROYEK', 'ANON_KEY');
 
-        // -- LOGIC UNTUK CEK LOGIN --
-        async function checkUser() {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (!user) window.location.href = "login.html"; // Redirect ke login kalau belum masuk
-            loadInventory();
-        }
-
-        async function addStock() {
+        async function addBulkStock() {
             const type = document.getElementById('acc-type').value;
-            const content = document.getElementById('acc-data').value;
-            
-            const { error } = await supabase.from('gmail_stocks').insert([{ category: type, content: content }]);
+            const lines = document.getElementById('acc-data').value.split('\n');
+            const dataToPush = lines.filter(line => line.trim() !== '').map(line => ({
+                category: type,
+                content: line,
+                is_sold: false
+            }));
+
+            const { error } = await supabaseClient.from('gmail_stocks').insert(dataToPush);
             if (!error) {
-                alert("Stock Added!");
-                loadInventory();
+                alert('Success added ' + dataToPush.length + ' accounts!');
+                location.reload();
             }
         }
 
-        async function loadInventory() {
-            const { data } = await supabase.from('gmail_stocks').select('*').order('id', { ascending: false });
-            const table = document.getElementById('inventory-table');
-            table.innerHTML = '';
-            
-            data.forEach(item => {
-                table.innerHTML += `
-                    <tr class="border-t border-slate-700 text-sm">
-                        <td class="p-4">${item.category}</td>
-                        <td class="p-4 font-mono text-xs opacity-60">${item.content}</td>
-                        <td class="p-4">${item.is_sold ? '❌ Sold' : '✅ Available'}</td>
-                        <td class="p-4"><button onclick="deleteItem(${item.id})" class="text-red-500">Delete</button></td>
+        async function loadData() {
+            const { data: stocks } = await supabaseClient.from('gmail_stocks').select('*').limit(10).order('id', {ascending: false});
+            const list = document.getElementById('inventory-list');
+            stocks.forEach(s => {
+                list.innerHTML += `
+                    <tr>
+                        <td class="py-4 font-bold text-blue-400">${s.category}</td>
+                        <td class="py-4 font-mono text-[10px] opacity-60">${s.content.substring(0,20)}...</td>
+                        <td class="py-4">${s.is_sold ? '❌ Sold' : '✅ Ready'}</td>
                     </tr>
                 `;
             });
+            document.getElementById('stat-stock').innerText = stocks.length;
         }
 
-        async function logout() {
-            await supabase.auth.signOut();
-            window.location.href = "index.html";
-        }
-
-        checkUser();
+        loadData();
     </script>
 </body>
 </html>
