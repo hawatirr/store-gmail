@@ -1,114 +1,145 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SosmedStore — Gmail Specialist</title>
+    <title>GMAIL.STORE — High-Quality Aged & Fresh Accounts</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #0f172a;
+            background: #070b14;
             overflow-x: hidden;
+            color: white;
         }
 
         .blob {
             position: absolute;
             width: 600px;
             height: 600px;
-            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
-            filter: blur(100px);
+            background: linear-gradient(135deg, #3b82f6 0%, #2dd4bf 100%);
+            filter: blur(120px);
             border-radius: 50%;
             z-index: -1;
             opacity: 0.15;
         }
 
         .glass {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .product-card {
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .product-card:hover {
-            transform: translateY(-12px);
-            background: rgba(255, 255, 255, 0.06);
-            border-color: rgba(59, 130, 246, 0.5);
+            transform: translateY(-15px);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+
+        .img-container {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            border-radius: 24px;
+            margin-bottom: 24px;
+        }
+
+        .img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .product-card:hover img {
+            transform: scale(1.1);
         }
     </style>
 </head>
-<body class="text-white min-height-screen flex flex-col">
+<body class="min-h-screen flex flex-col">
 
-    <div class="blob top-[-15%] left-[-10%]"></div>
-    <div class="blob bottom-[-15%] right-[-10%] bg-blue-500"></div>
+    <div class="blob top-[-10%] left-[-10%]"></div>
+    <div class="blob bottom-[-10%] right-[-10%] bg-purple-600"></div>
 
     <nav class="container mx-auto px-8 py-8 flex justify-between items-center">
         <div class="text-2xl font-extrabold tracking-tighter">
-            GMAIL<span class="text-blue-500">STORE</span>
+            GMAIL<span class="text-blue-500">.STORE</span>
         </div>
-        <button class="glass px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-white hover:text-black transition duration-300">
-            Cek Pesanan
-        </button>
+        <div class="flex gap-4">
+            <button class="glass px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-white hover:text-black transition duration-300">
+                Track Order
+            </button>
+        </div>
     </nav>
 
     <header class="container mx-auto px-6 pt-20 pb-16 text-center">
-        <h1 class="text-5xl md:text-6xl font-extrabold mb-6 tracking-tight">
-            Gmail Berkualitas. <br>
-            <span class="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">Instan & Terpercaya.</span>
+        <div class="inline-block glass px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] text-blue-400 mb-6">
+            Global Premium Supplier
+        </div>
+        <h1 class="text-5xl md:text-7xl font-extrabold mb-8 tracking-tight">
+            Reliable Accounts. <br>
+            <span class="bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">Instant Delivery.</span>
         </h1>
-        <p class="max-w-xl mx-auto text-slate-400 text-lg font-light">
-            Menyediakan akun Gmail Fresh dan Old untuk kebutuhan bisnis, marketing, dan verifikasi Anda.
+        <p class="max-w-2xl mx-auto text-slate-400 text-lg font-light leading-relaxed">
+            Premium Gmail accounts for professional marketing, business scaling, and secure verification. Powered by Binance Pay for global transactions.
         </p>
     </header>
 
     <section class="container mx-auto px-6 max-w-5xl pb-32">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
             
-            <div class="product-card glass rounded-[40px] p-10 relative overflow-hidden">
-                <div class="flex justify-between items-start mb-16">
-                    <div class="bg-blue-500/20 p-4 rounded-2xl">
-                        <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                    </div>
-                    <span class="text-[10px] font-bold tracking-widest uppercase py-1 px-3 glass rounded-full opacity-70">Baru Dibuat</span>
+            <div class="product-card glass rounded-[48px] p-8 relative">
+                <div class="img-container">
+                    <img src="https://images.unsplash.com/photo-1614064641938-3bbee52942c7?auto=format&fit=crop&q=80&w=800" alt="Fresh Gmail">
                 </div>
                 
-                <h3 class="text-3xl font-bold mb-3">Gmail Fresh</h3>
-                <p class="text-slate-400 mb-10 leading-relaxed">Akun Gmail baru dengan verifikasi nomor hp. Bersih, belum pernah digunakan untuk platform apapun.</p>
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-3xl font-bold">Gmail Fresh</h3>
+                    <span class="text-[10px] font-bold bg-emerald-500/10 text-emerald-400 py-1 px-3 rounded-full border border-emerald-500/20">NEWLY CREATED</span>
+                </div>
+                
+                <p class="text-slate-400 mb-8 text-sm leading-relaxed">
+                    Clean, phone-verified accounts created within the last 24 hours. Perfect for immediate registration and clean footprints.
+                </p>
                 
                 <div class="flex justify-between items-center pt-6 border-t border-white/5">
                     <div>
-                        <span class="block text-[10px] uppercase opacity-40 font-bold mb-1">Harga Satuan</span>
-                        <span class="text-3xl font-extrabold">0.50 <span class="text-sm font-normal opacity-60 ml-1">USDT</span></span>
+                        <span class="block text-[10px] uppercase opacity-40 font-bold">Price per unit</span>
+                        <span class="text-3xl font-extrabold">$0.50 <span class="text-sm font-normal opacity-60 ml-1">USDT</span></span>
                     </div>
-                    <button class="bg-blue-500 text-white px-10 py-4 rounded-2xl font-bold text-sm hover:bg-blue-600 transition duration-300 shadow-lg shadow-blue-500/20">
-                        Beli
+                    <button class="bg-blue-600 text-white px-8 py-4 rounded-2xl font-bold text-sm hover:bg-blue-500 transition duration-300 shadow-xl shadow-blue-500/20">
+                        Buy Now
                     </button>
                 </div>
             </div>
 
-            <div class="product-card glass rounded-[40px] p-10 relative overflow-hidden border-indigo-500/20">
-                <div class="flex justify-between items-start mb-16">
-                    <div class="bg-indigo-500/20 p-4 rounded-2xl">
-                        <svg class="w-8 h-8 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    </div>
-                    <span class="text-[10px] font-bold tracking-widest uppercase py-1 px-3 glass rounded-full text-indigo-300">Stok Terbatas</span>
+            <div class="product-card glass rounded-[48px] p-8 relative">
+                <div class="img-container">
+                    <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=800" alt="Aged Gmail">
                 </div>
                 
-                <h3 class="text-3xl font-bold mb-3">Gmail Old</h3>
-                <p class="text-slate-400 mb-10 leading-relaxed">Akun tahun 2021 - 2023. Lebih kuat untuk aktivitas marketing berat dan verifikasi platform luar negeri.</p>
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-3xl font-bold">Gmail Aged</h3>
+                    <span class="text-[10px] font-bold bg-amber-500/10 text-amber-400 py-1 px-3 rounded-full border border-amber-500/20">2021-2023</span>
+                </div>
+                
+                <p class="text-slate-400 mb-8 text-sm leading-relaxed">
+                    Vintage accounts with high trust scores. Ideally suited for heavy marketing, bypassings filters, and high-tier platform verifications.
+                </p>
                 
                 <div class="flex justify-between items-center pt-6 border-t border-white/5">
                     <div>
-                        <span class="block text-[10px] uppercase opacity-40 font-bold mb-1">Harga Satuan</span>
-                        <span class="text-3xl font-extrabold">1.20 <span class="text-sm font-normal opacity-60 ml-1">USDT</span></span>
+                        <span class="block text-[10px] uppercase opacity-40 font-bold">Price per unit</span>
+                        <span class="text-3xl font-extrabold">$1.20 <span class="text-sm font-normal opacity-60 ml-1">USDT</span></span>
                     </div>
-                    <button class="bg-white text-black px-10 py-4 rounded-2xl font-bold text-sm hover:bg-indigo-500 hover:text-white transition duration-300 shadow-lg shadow-white/10">
-                        Beli
+                    <button class="bg-white text-black px-8 py-4 rounded-2xl font-bold text-sm hover:bg-emerald-400 hover:text-white transition duration-300">
+                        Buy Now
                     </button>
                 </div>
             </div>
@@ -116,8 +147,12 @@
         </div>
     </section>
 
-    <footer class="mt-auto container mx-auto px-6 py-10 border-t border-white/5 text-center text-xs opacity-30 tracking-widest uppercase">
-        &copy; 2026 GMAIL.STORE — Automated Crypto Payment
+    <footer class="mt-auto container mx-auto px-6 py-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] opacity-40 tracking-widest uppercase">
+        <div>&copy; 2026 GMAIL.STORE — Premium Virtual Assets</div>
+        <div class="flex gap-6">
+            <span>Binance Pay Verified</span>
+            <span>24/7 Support</span>
+        </div>
     </footer>
 
 </body>
