@@ -1,0 +1,13 @@
+<input id="email" type="email">
+<input id="password" type="password">
+<button onclick="signIn()">Login Admin</button>
+
+<script>
+async function signIn() {
+    const { data, error } = await supabase.auth.signInWithPassword({
+        email: email.value,
+        password: password.value,
+    })
+    if (!error) window.location.href = "admin.html";
+}
+</script>
