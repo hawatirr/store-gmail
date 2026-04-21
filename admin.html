@@ -1,74 +1,131 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GMAIL.STORE — Manager Dashboard</title>
+    <title>Dashboard Admin — GMAIL.STORE</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { background: #070b14; color: white; font-family: 'Plus Jakarta Sans', sans-serif; }
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(180deg, #0a0e1a 0%, #111827 100%);
+            min-height: 100vh;
+            color: #f9fafb;
+        }
+        .gradient-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            z-index: 0;
+        }
+        .orb-1 { top: -10%; left: -5%; width: 400px; height: 400px; background: #3b82f6; animation: float 8s ease-in-out infinite; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.05); }
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+        }
+        .input-field, .select-field, .textarea-field {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        .input-field:focus, .select-field:focus, .textarea-field:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 40px rgba(59, 130, 246, 0.3);
+        }
         .sidebar { width: 260px; height: 100vh; position: fixed; left: 0; top: 0; }
         .main-content { margin-left: 260px; padding: 40px; }
-        @media (max-width: 768px) { .sidebar { display: none; } .main-content { margin-left: 0; padding: 20px; } }
+        @media (max-width: 768px) { 
+            .sidebar { display: none; } 
+            .main-content { margin-left: 0; padding: 20px; } 
+        }
     </style>
 </head>
-<body>
+<body class="relative">
+    <div class="gradient-orb orb-1"></div>
 
-    <aside class="sidebar glass p-6 hidden md:block">
-        <h2 class="text-xl font-bold mb-10 tracking-tighter text-blue-400">ADMIN.PANEL</h2>
-        <nav class="space-y-4">
-            <a href="#" class="block p-3 glass rounded-xl text-sm font-bold">Dashboard</a>
-            <a href="#" class="block p-3 hover:bg-white/5 rounded-xl text-sm opacity-60">Manage Stock</a>
-            <a href="#" class="block p-3 hover:bg-white/5 rounded-xl text-sm opacity-60">Order History</a>
-            <a href="#" class="block p-3 hover:bg-white/5 rounded-xl text-sm opacity-60">Settings</a>
+    <!-- Sidebar -->
+    <aside class="sidebar card p-6 hidden md:block m-4 h-[calc(100vh-32px)] rounded-2xl">
+        <h2 class="text-lg font-bold mb-10 tracking-tight text-blue-400">ADMIN PANEL</h2>
+        <nav class="space-y-2">
+            <a href="#" class="block p-3 card text-sm font-medium text-white">Dashboard</a>
+            <a href="#" class="block p-3 hover:bg-white/5 rounded-xl text-sm text-gray-400">Manage Stock</a>
+            <a href="#" class="block p-3 hover:bg-white/5 rounded-xl text-sm text-gray-400">Order History</a>
+            <a href="#" class="block p-3 hover:bg-white/5 rounded-xl text-sm text-gray-400">Settings</a>
         </nav>
-        <button onclick="logout()" class="absolute bottom-10 left-6 text-red-400 text-xs font-bold uppercase tracking-widest">Sign Out</button>
+        <button onclick="logout()" class="absolute bottom-6 left-6 right-6 py-3 text-red-400 text-sm font-medium hover:bg-red-500/10 rounded-xl transition">
+            Sign Out
+        </button>
     </aside>
 
+    <!-- Main Content -->
     <main class="main-content">
+        <!-- Stats Cards -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            <div class="glass p-6 rounded-[32px]">
-                <p class="text-[10px] uppercase opacity-40 font-bold mb-2">Available Stock</p>
-                <h3 id="stat-stock" class="text-4xl font-black">0</h3>
+            <div class="card p-6">
+                <p class="text-xs uppercase text-gray-400 font-medium mb-2">Available Stock</p>
+                <h3 id="stat-stock" class="text-4xl font-bold">0</h3>
             </div>
-            <div class="glass p-6 rounded-[32px]">
-                <p class="text-[10px] uppercase opacity-40 font-bold mb-2">Total Sales</p>
-                <h3 id="stat-sales" class="text-4xl font-black text-emerald-400">$0.00</h3>
+            <div class="card p-6">
+                <p class="text-xs uppercase text-gray-400 font-medium mb-2">Total Sales</p>
+                <h3 id="stat-sales" class="text-4xl font-bold text-emerald-400">$0.00</h3>
             </div>
-            <div class="glass p-6 rounded-[32px]">
-                <p class="text-[10px] uppercase opacity-40 font-bold mb-2">Total Users</p>
-                <h3 id="stat-users" class="text-4xl font-black text-blue-400">0</h3>
+            <div class="card p-6">
+                <p class="text-xs uppercase text-gray-400 font-medium mb-2">Total Users</p>
+                <h3 id="stat-users" class="text-4xl font-bold text-blue-400">0</h3>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
-            <div class="lg:col-span-1 glass p-8 rounded-[40px]">
-                <h4 class="text-lg font-bold mb-6">Add New Account</h4>
+        <!-- Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Add Stock Form -->
+            <div class="lg:col-span-1 card p-6">
+                <h4 class="text-lg font-semibold mb-6">Add New Account</h4>
                 <div class="space-y-4">
-                    <select id="acc-type" class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm focus:outline-none focus:border-blue-500">
+                    <select id="acc-type" class="select-field w-full px-4 py-3 rounded-xl text-white">
                         <option value="Fresh">Gmail Fresh</option>
                         <option value="Aged">Gmail Aged</option>
                     </select>
-                    <textarea id="acc-data" rows="4" placeholder="email|pass|recovery (One per line)" class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm focus:outline-none"></textarea>
-                    <button onclick="addBulkStock()" class="w-full bg-blue-600 py-4 rounded-2xl font-bold shadow-lg shadow-blue-500/20 hover:bg-blue-500 transition">Add To Inventory</button>
+                    <textarea id="acc-data" rows="6" placeholder="email|pass|recovery (One per line)" 
+                        class="textarea-field w-full px-4 py-3 rounded-xl text-white placeholder-gray-500 resize-none"></textarea>
+                    <button onclick="addBulkStock()" class="btn-primary w-full py-3.5 rounded-xl font-semibold">
+                        Add to Inventory
+                    </button>
                 </div>
             </div>
 
-            <div class="lg:col-span-2 glass p-8 rounded-[40px]">
-                <h4 class="text-lg font-bold mb-6">Recent Inventory</h4>
+            <!-- Recent Inventory -->
+            <div class="lg:col-span-2 card p-6">
+                <h4 class="text-lg font-semibold mb-6">Recent Inventory</h4>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm">
-                        <thead class="opacity-30 border-b border-white/5">
+                        <thead class="text-gray-400 border-b border-white/5">
                             <tr>
-                                <th class="pb-4">Category</th>
-                                <th class="pb-4">Credentials</th>
-                                <th class="pb-4">Status</th>
+                                <th class="pb-4 font-medium">Category</th>
+                                <th class="pb-4 font-medium">Credentials</th>
+                                <th class="pb-4 font-medium">Status</th>
                             </tr>
                         </thead>
                         <tbody id="inventory-list" class="divide-y divide-white/5">
-                            </tbody>
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -76,41 +133,174 @@
     </main>
 
     <script>
-        // Supabase Init (Ganti dengan API Key Anda)
-        const supabaseClient = supabase.createClient('URL_PROYEK', 'ANON_KEY');
+        // Konfigurasi Supabase - GANTI URL_PROYEK dengan ID proyek Supabase Anda
+        // Contoh: https://abcdefghij.supabase.co
+        const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IllPVVJfUFJPSkVDVF9JRCIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNjQwMDAwMDAwLCJleHAiOjE5NTU1Nzc2MDB9.YOUR_ANON_KEY_HERE'; // Ganti dengan Anon Key
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // Mock data fallback jika Supabase tidak dikonfigurasi
+        const mockInventory = [
+            { id: 1, name: 'Gmail Fresh', description: 'user1@gmail.com|pass123|rec1@email.com', price: 50000, stock: 50, category: 'Fresh' },
+            { id: 2, name: 'Gmail Aged', description: 'user2@gmail.com|pass456|rec2@email.com', price: 120000, stock: 25, category: 'Aged' },
+            { id: 3, name: 'Outlook Premium', description: 'user3@outlook.com|pass789', price: 75000, stock: 30, category: 'Outlook' }
+        ];
+
+        // Check authentication on load
+        window.addEventListener('DOMContentLoaded', async () => {
+            // Cek jika URL belum dikonfigurasi - gunakan mock auth
+            if (SUPABASE_URL.includes('YOUR_PROJECT_ID')) {
+                console.log('Supabase belum dikonfigurasi, menggunakan mock auth');
+                
+                const session = JSON.parse(localStorage.getItem('user_session'));
+                
+                if (!session) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                if (session.email !== 'admin@gmail.store') {
+                    alert('Akses ditolak. Hanya admin yang dapat mengakses halaman ini.');
+                    window.location.href = 'index.html';
+                    return;
+                }
+                
+                loadMockData();
+                return;
+            }
+            
+            // Cek session Supabase
+            const { data: { session } } = await supabase.auth.getSession();
+            
+            if (!session) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Cek apakah admin
+            if (session.user.email !== 'admin@gmail.store') {
+                alert('Akses ditolak. Hanya admin yang dapat mengakses halaman ini.');
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            loadData();
+        });
+
+        function loadMockData() {
+            const list = document.getElementById('inventory-list');
+            list.innerHTML = '';
+            
+            mockInventory.forEach(s => {
+                const descPreview = s.description ? s.description.substring(0, 25) + '...' : 'N/A';
+                const statusClass = s.stock === 0 ? 'bg-red-500/10 text-red-400' : 'bg-emerald-500/10 text-emerald-400';
+                const statusText = s.stock === 0 ? 'Sold Out' : 'Ready';
+                
+                list.innerHTML += `
+                    <tr class="hover:bg-white/5 transition">
+                        <td class="py-4 font-medium text-blue-400">${s.category || s.name}</td>
+                        <td class="py-4 font-mono text-xs text-gray-400">${descPreview}</td>
+                        <td class="py-4">
+                            <span class="px-2 py-1 rounded-lg text-xs ${statusClass}">
+                                ${statusText}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('stat-stock').innerText = mockInventory.reduce((sum, s) => sum + (s.stock || 0), 0);
+            document.getElementById('stat-sales').innerText = 'Rp 0';
+            document.getElementById('stat-users').innerText = '1';
+        }
 
         async function addBulkStock() {
             const type = document.getElementById('acc-type').value;
             const lines = document.getElementById('acc-data').value.split('\n');
-            const dataToPush = lines.filter(line => line.trim() !== '').map(line => ({
-                category: type,
-                content: line,
-                is_sold: false
+            
+            const dataToPush = lines.filter(line => line.trim() !== '').map((line, index) => ({
+                name: `${type} Account`,
+                description: line.trim(),
+                price: type === 'Fresh' ? 50000 : 120000,
+                stock: 1,
+                category: type
             }));
 
-            const { error } = await supabaseClient.from('gmail_stocks').insert(dataToPush);
-            if (!error) {
-                alert('Success added ' + dataToPush.length + ' accounts!');
+            if (dataToPush.length === 0) {
+                alert('Please enter at least one account');
+                return;
+            }
+
+            // Cek jika URL belum dikonfigurasi - gunakan mock add
+            if (SUPABASE_URL.includes('YOUR_PROJECT_ID')) {
+                console.log('Mock add stock:', dataToPush.length, 'accounts');
+                alert(`Success added ${dataToPush.length} accounts! (Mock mode)`);
                 location.reload();
+                return;
+            }
+
+            try {
+                // Insert ke Supabase
+                const { data, error } = await supabase.from('products').insert(dataToPush);
+                
+                if (error) throw error;
+                
+                alert(`Success added ${dataToPush.length} accounts!`);
+                location.reload();
+            } catch (err) {
+                console.error('Error adding stock:', err);
+                alert('Gagal menambahkan stok. Pastikan tabel products sudah dibuat di Supabase.');
             }
         }
 
         async function loadData() {
-            const { data: stocks } = await supabaseClient.from('gmail_stocks').select('*').limit(10).order('id', {ascending: false});
-            const list = document.getElementById('inventory-list');
-            stocks.forEach(s => {
-                list.innerHTML += `
-                    <tr>
-                        <td class="py-4 font-bold text-blue-400">${s.category}</td>
-                        <td class="py-4 font-mono text-[10px] opacity-60">${s.content.substring(0,20)}...</td>
-                        <td class="py-4">${s.is_sold ? '❌ Sold' : '✅ Ready'}</td>
-                    </tr>
-                `;
-            });
-            document.getElementById('stat-stock').innerText = stocks.length;
+            try {
+                const { data: stocks, error } = await supabase.from('products').select('*');
+                
+                if (error) throw error;
+                
+                const list = document.getElementById('inventory-list');
+                
+                if (stocks && stocks.length > 0) {
+                    stocks.forEach(s => {
+                        const descPreview = s.description ? s.description.substring(0, 25) + '...' : 'N/A';
+                        const statusClass = s.stock === 0 ? 'bg-red-500/10 text-red-400' : 'bg-emerald-500/10 text-emerald-400';
+                        const statusText = s.stock === 0 ? 'Sold Out' : 'Ready';
+                        
+                        list.innerHTML += `
+                            <tr class="hover:bg-white/5 transition">
+                                <td class="py-4 font-medium text-blue-400">${s.category || s.name}</td>
+                                <td class="py-4 font-mono text-xs text-gray-400">${descPreview}</td>
+                                <td class="py-4">
+                                    <span class="px-2 py-1 rounded-lg text-xs ${statusClass}">
+                                        ${statusText}
+                                    </span>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                    document.getElementById('stat-stock').innerText = stocks.reduce((sum, s) => sum + (s.stock || 0), 0);
+                } else {
+                    list.innerHTML = '<tr><td colspan="3" class="py-8 text-center text-gray-400">No inventory yet</td></tr>';
+                    document.getElementById('stat-stock').innerText = '0';
+                }
+            } catch (err) {
+                console.error('Error loading data:', err);
+                document.getElementById('inventory-list').innerHTML = '<tr><td colspan="3" class="py-8 text-center text-red-400">Gagal memuat data. Pastikan tabel products sudah dibuat.</td></tr>';
+            }
         }
 
-        loadData();
+        async function logout() {
+            if (SUPABASE_URL.includes('YOUR_PROJECT_ID')) {
+                localStorage.removeItem('user_session');
+                window.location.href = "login.html";
+                return;
+            }
+            
+            await supabase.auth.signOut();
+            window.location.href = "login.html";
+        }
     </script>
 </body>
 </html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar - GMAIL.STORE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(180deg, #0a0e1a 0%, #111827 100%);
+            min-height: 100vh;
+            color: #f9fafb;
+        }
+        .gradient-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            z-index: 0;
+        }
+        .orb-1 { top: -10%; left: -5%; width: 400px; height: 400px; background: #3b82f6; animation: float 8s ease-in-out infinite; }
+        .orb-2 { bottom: -10%; right: -5%; width: 350px; height: 350px; background: #10b981; animation: float 8s ease-in-out infinite 2s; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.05); }
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 40px rgba(59, 130, 246, 0.3);
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    </style>
+</head>
+<body class="relative flex items-center justify-center">
+    <div class="gradient-orb orb-1"></div>
+    <div class="gradient-orb orb-2"></div>
+    
+    <div class="container relative z-10">
+        <div class="max-w-md mx-auto">
+            <!-- Back Link -->
+            <a href="index.html" class="inline-flex items-center text-sm text-gray-400 hover:text-white mb-8 transition">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                Kembali
+            </a>
+            
+            <!-- Register Card -->
+            <div class="card p-8">
+                <div class="text-center mb-8">
+                    <h1 class="text-3xl font-bold mb-2">Buat Akun</h1>
+                    <p class="text-gray-400 text-sm">Daftar untuk mulai berbelanja</p>
+                </div>
+                
+                <form id="registerForm" class="space-y-5">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Nama Lengkap</label>
+                        <input type="text" id="fullname" required 
+                            class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-blue-500 transition text-white placeholder-gray-500"
+                            placeholder="John Doe">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                        <input type="email" id="email" required 
+                            class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-blue-500 transition text-white placeholder-gray-500"
+                            placeholder="nama@email.com">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Password</label>
+                        <input type="password" id="password" required minlength="6"
+                            class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-blue-500 transition text-white placeholder-gray-500"
+                            placeholder="Minimal 6 karakter">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Konfirmasi Password</label>
+                        <input type="password" id="confirmPassword" required 
+                            class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-blue-500 transition text-white placeholder-gray-500"
+                            placeholder="Ulangi password">
+                    </div>
+                    
+                    <button type="submit" id="submitBtn" class="w-full btn-primary py-3 rounded-xl font-semibold text-white">
+                        Daftar
+                    </button>
+                </form>
+                
+                <div id="errorMsg" class="hidden mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm text-center"></div>
+                <div id="successMsg" class="hidden mt-4 p-3 bg-green-500/10 border border-green-500/20 rounded-xl text-green-400 text-sm text-center"></div>
+                
+                <div class="mt-6 text-center">
+                    <p class="text-sm text-gray-400">
+                        Sudah punya akun? 
+                        <a href="login.html" class="text-blue-400 hover:text-blue-300 transition">Masuk</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Konfigurasi Supabase - GANTI URL_PROYEK dengan ID proyek Supabase Anda
+        // Contoh: https://abcdefghij.supabase.co
+        const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IllPVVJfUFJPSkVDVF9JRCIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNjQwMDAwMDAwLCJleHAiOjE5NTU1Nzc2MDB9.YOUR_ANON_KEY_HERE'; // Ganti dengan Anon Key
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const fullname = document.getElementById('fullname').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const submitBtn = document.getElementById('submitBtn');
+            const errorMsg = document.getElementById('errorMsg');
+            const successMsg = document.getElementById('successMsg');
+            
+            // Validasi password
+            if (password !== confirmPassword) {
+                errorMsg.textContent = 'Password tidak cocok!';
+                errorMsg.classList.remove('hidden');
+                successMsg.classList.add('hidden');
+                return;
+            }
+            
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="flex items-center justify-center"><svg class="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/></svg>Memproses...</span>';
+            errorMsg.classList.add('hidden');
+            successMsg.classList.add('hidden');
+            
+            try {
+                // Cek jika URL belum dikonfigurasi - gunakan mock register
+                if (SUPABASE_URL.includes('YOUR_PROJECT_ID')) {
+                    console.log('Supabase belum dikonfigurasi, menggunakan mock register');
+                    
+                    // Mock register untuk demo
+                    localStorage.setItem('user_session', JSON.stringify({ email: email, full_name: fullname, role: 'user' }));
+                    
+                    successMsg.textContent = 'Akun berhasil dibuat! Mengalihkan ke halaman login...';
+                    successMsg.classList.remove('hidden');
+                    
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                    return;
+                }
+                
+                // Daftar dengan Supabase Auth
+                const { data, error } = await supabase.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        data: {
+                            full_name: fullname
+                        }
+                    }
+                });
+                
+                if (error) throw error;
+                
+                successMsg.textContent = 'Akun berhasil dibuat! Silakan cek email untuk verifikasi.';
+                successMsg.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+                
+            } catch (err) {
+                console.error('Register error:', err);
+                errorMsg.textContent = err.message || 'Gagal membuat akun. Coba lagi.';
+                errorMsg.classList.remove('hidden');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Daftar';
+            }
+        });
+    </script>
+</body>
+</html>
