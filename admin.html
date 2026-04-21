@@ -133,8 +133,27 @@
     </main>
 
     <script>
-        // Backend API URL
-        const API_URL = 'http://localhost:3000/api';
+        // Mock API untuk kompatibilitas dengan GitHub Pages (tanpa backend server)
+        // Data disimpan di localStorage browser
+        
+        const DEFAULT_DATA = [
+            { id: 1, judul: 'Gmail Premium', deskripsi: 'account1@gmail.com|pass123', kategori: 'Gmail', status: 'available' },
+            { id: 2, judul: 'Gmail Business', deskripsi: 'account2@gmail.com|pass456', kategori: 'Gmail', status: 'sold' },
+            { id: 3, judul: 'Outlook Pro', deskripsi: 'account3@outlook.com|pass789', kategori: 'Outlook', status: 'available' }
+        ];
+
+        // Initialize mock data if not exists
+        if (!localStorage.getItem('mockInventory')) {
+            localStorage.setItem('mockInventory', JSON.stringify(DEFAULT_DATA));
+        }
+
+        function getMockData() {
+            return JSON.parse(localStorage.getItem('mockInventory') || '[]');
+        }
+
+        function saveMockData(data) {
+            localStorage.setItem('mockInventory', JSON.stringify(data));
+        }
 
         // Check authentication on load
         window.addEventListener('DOMContentLoaded', () => {
@@ -152,11 +171,11 @@
         async function addBulkStock() {
             const type = document.getElementById('acc-type').value;
             const lines = document.getElementById('acc-data').value.split('\n');
-            const token = localStorage.getItem('authToken');
             
-            const dataToPush = lines.filter(line => line.trim() !== '').map(line => ({
+            const dataToPush = lines.filter(line => line.trim() !== '').map((line, index) => ({
+                id: Date.now() + index,
                 judul: `${type} Account`,
-                deskripsi: line,
+                deskripsi: line.trim(),
                 kategori: type,
                 status: 'available'
             }));
@@ -166,95 +185,50 @@
                 return;
             }
 
-            try {
-                const response = await fetch(`${API_URL}/data`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify(dataToPush[0]) // Send one at a time for simplicity
-                });
+            // Get existing data and add new items
+            const existingData = getMockData();
+            const updatedData = [...existingData, ...dataToPush];
+            saveMockData(updatedData);
 
-                const result = await response.json();
-
-                if (result.success) {
-                    alert(`Success added ${dataToPush.length} accounts!`);
-                    location.reload();
-                } else {
-                    alert('Error: ' + result.message);
-                }
-            } catch (error) {
-                console.error('Add stock error:', error);
-                alert('Connection error. Make sure backend is running.');
-            }
+            alert(`Success added ${dataToPush.length} accounts!`);
+            location.reload();
         }
 
         async function loadData() {
-            const token = localStorage.getItem('authToken');
+            const stocks = getMockData();
             
-            try {
-                const response = await fetch(`${API_URL}/data`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+            const list = document.getElementById('inventory-list');
+            
+            if (stocks && stocks.length > 0) {
+                stocks.forEach(s => {
+                    const descPreview = s.deskripsi ? s.deskripsi.substring(0, 25) + '...' : 'N/A';
+                    const statusClass = s.status === 'sold' ? 'bg-red-500/10 text-red-400' : 'bg-emerald-500/10 text-emerald-400';
+                    const statusText = s.status === 'sold' ? 'Sold' : 'Ready';
+                    
+                    list.innerHTML += `
+                        <tr class="hover:bg-white/5 transition">
+                            <td class="py-4 font-medium text-blue-400">${s.kategori || 'General'}</td>
+                            <td class="py-4 font-mono text-xs text-gray-400">${descPreview}</td>
+                            <td class="py-4">
+                                <span class="px-2 py-1 rounded-lg text-xs ${statusClass}">
+                                    ${statusText}
+                                </span>
+                            </td>
+                        </tr>
+                    `;
                 });
-
-                const result = await response.json();
-                
-                if (!result.success) {
-                    console.error('Error loading data:', result.message);
-                    if (response.status === 401 || response.status === 403) {
-                        window.location.href = 'login.html';
-                    }
-                    return;
-                }
-
-                const list = document.getElementById('inventory-list');
-                const stocks = result.data;
-                
-                if (stocks && stocks.length > 0) {
-                    stocks.forEach(s => {
-                        list.innerHTML += `
-                            <tr class="hover:bg-white/5 transition">
-                                <td class="py-4 font-medium text-blue-400">${s.kategori || 'General'}</td>
-                                <td class="py-4 font-mono text-xs text-gray-400">${s.deskripsi ? s.deskripsi.substring(0,25) + '...' : 'N/A'}</td>
-                                <td class="py-4">
-                                    <span class="px-2 py-1 rounded-lg text-xs ${s.status === 'sold' ? 'bg-red-500/10 text-red-400' : 'bg-emerald-500/10 text-emerald-400'}">
-                                        ${s.status === 'sold' ? 'Sold' : 'Ready'}
-                                    </span>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                    document.getElementById('stat-stock').innerText = stocks.length;
-                }
-            } catch (error) {
-                console.error('Load data error:', error);
-                alert('Failed to load data. Make sure backend is running.');
+                document.getElementById('stat-stock').innerText = stocks.length;
+            } else {
+                list.innerHTML = '<tr><td colspan="3" class="py-8 text-center text-gray-400">No inventory yet</td></tr>';
+                document.getElementById('stat-stock').innerText = '0';
             }
         }
 
         async function logout() {
-            const token = localStorage.getItem('authToken');
-            
-            try {
-                await fetch(`${API_URL}/logout`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ token })
-                });
-            } catch (error) {
-                console.error('Logout error:', error);
-            } finally {
-                // Clear local storage and redirect
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('user');
-                window.location.href = "login.html";
-            }
+            // Clear local storage and redirect
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('user');
+            window.location.href = "login.html";
         }
     </script>
 </body>
