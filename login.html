@@ -1,13 +1,125 @@
-<input id="email" type="email">
-<input id="password" type="password">
-<button onclick="signIn()">Login Admin</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — GMAIL.STORE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(180deg, #0a0e1a 0%, #111827 100%);
+            min-height: 100vh;
+            color: #f9fafb;
+        }
+        .gradient-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            z-index: 0;
+        }
+        .orb-1 { top: -10%; left: -5%; width: 400px; height: 400px; background: #3b82f6; animation: float 8s ease-in-out infinite; }
+        .orb-2 { bottom: -10%; right: -5%; width: 350px; height: 350px; background: #10b981; animation: float 8s ease-in-out infinite 2s; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.05); }
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+        }
+        .input-field {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 40px rgba(59, 130, 246, 0.3);
+        }
+    </style>
+</head>
+<body class="relative flex items-center justify-center px-4">
+    <div class="gradient-orb orb-1"></div>
+    <div class="gradient-orb orb-2"></div>
 
-<script>
-async function signIn() {
-    const { data, error } = await supabase.auth.signInWithPassword({
-        email: email.value,
-        password: password.value,
-    })
-    if (!error) window.location.href = "admin.html";
-}
-</script>
+    <div class="w-full max-w-md relative z-10">
+        <!-- Logo -->
+        <div class="text-center mb-8">
+            <a href="index.html" class="inline-block text-2xl font-bold tracking-tight mb-2">
+                GMAIL<span class="text-blue-500">.STORE</span>
+            </a>
+            <p class="text-gray-400 text-sm">Admin Access</p>
+        </div>
+
+        <!-- Login Form -->
+        <div class="card p-8">
+            <h2 class="text-xl font-semibold mb-6 text-center">Welcome Back</h2>
+            
+            <form onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs text-gray-400 uppercase tracking-wide mb-2">Email</label>
+                    <input id="email" type="email" required 
+                        class="input-field w-full px-4 py-3 rounded-xl text-white placeholder-gray-500"
+                        placeholder="admin@gmail.store">
+                </div>
+                
+                <div>
+                    <label class="block text-xs text-gray-400 uppercase tracking-wide mb-2">Password</label>
+                    <input id="password" type="password" required 
+                        class="input-field w-full px-4 py-3 rounded-xl text-white placeholder-gray-500"
+                        placeholder="••••••••">
+                </div>
+
+                <button type="submit" 
+                    class="btn-primary w-full py-3.5 rounded-xl font-semibold text-white mt-6">
+                    Sign In
+                </button>
+            </form>
+
+            <div class="mt-6 text-center">
+                <a href="index.html" class="text-sm text-gray-400 hover:text-white transition">
+                    ← Back to Store
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Supabase Init (Ganti dengan API Key Anda)
+        const supabase = supabase.createClient('URL_PROYEK', 'ANON_KEY');
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: email,
+                password: password,
+            });
+
+            if (!error) {
+                window.location.href = "admin.html";
+            } else {
+                alert('Login failed: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>
