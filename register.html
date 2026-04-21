@@ -115,8 +115,9 @@
 
     <script>
         // Konfigurasi Supabase - GANTI URL_PROYEK dengan ID proyek Supabase Anda
+        // Contoh: https://abcdefghij.supabase.co
         const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
-        const SUPABASE_KEY = 'sbp_8c81a6f19ca9616a47b83c8ae58f67d1e10d3c86';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IllPVVJfUFJPSkVDVF9JRCIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNjQwMDAwMDAwLCJleHAiOjE5NTU1Nzc2MDB9.YOUR_ANON_KEY_HERE'; // Ganti dengan Anon Key
         
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -145,6 +146,22 @@
             successMsg.classList.add('hidden');
             
             try {
+                // Cek jika URL belum dikonfigurasi - gunakan mock register
+                if (SUPABASE_URL.includes('YOUR_PROJECT_ID')) {
+                    console.log('Supabase belum dikonfigurasi, menggunakan mock register');
+                    
+                    // Mock register untuk demo
+                    localStorage.setItem('user_session', JSON.stringify({ email: email, full_name: fullname, role: 'user' }));
+                    
+                    successMsg.textContent = 'Akun berhasil dibuat! Mengalihkan ke halaman login...';
+                    successMsg.classList.remove('hidden');
+                    
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                    return;
+                }
+                
                 // Daftar dengan Supabase Auth
                 const { data, error } = await supabase.auth.signUp({
                     email: email,

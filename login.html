@@ -110,8 +110,9 @@
 
     <script>
         // Konfigurasi Supabase - GANTI URL_PROYEK dengan ID proyek Supabase Anda
+        // Contoh: https://abcdefghij.supabase.co
         const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
-        const SUPABASE_KEY = 'sbp_8c81a6f19ca9616a47b83c8ae58f67d1e10d3c86';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IllPVVJfUFJPSkVDVF9JRCIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNjQwMDAwMDAwLCJleHAiOjE5NTU1Nzc2MDB9.YOUR_ANON_KEY_HERE'; // Ganti dengan Anon Key
         
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -128,7 +129,25 @@
             errorMsg.classList.add('hidden');
             
             try {
-                // Coba login dengan Supabase Auth
+                // Cek jika URL belum dikonfigurasi - gunakan mock login
+                if (SUPABASE_URL.includes('YOUR_PROJECT_ID')) {
+                    console.log('Supabase belum dikonfigurasi, menggunakan mock login');
+                    
+                    // Mock login untuk demo
+                    if (email === 'admin@gmail.store' && password === 'admin') {
+                        localStorage.setItem('user_session', JSON.stringify({ email: email, role: 'admin' }));
+                        window.location.href = 'admin.html';
+                        return;
+                    } else if (email && password.length >= 6) {
+                        localStorage.setItem('user_session', JSON.stringify({ email: email, role: 'user' }));
+                        window.location.href = 'index.html';
+                        return;
+                    } else {
+                        throw new Error('Email atau password salah. Untuk admin: admin@gmail.store / admin');
+                    }
+                }
+                
+                // Login dengan Supabase Auth
                 const { data, error } = await supabase.auth.signInWithPassword({
                     email: email,
                     password: password
@@ -148,7 +167,7 @@
                 
             } catch (err) {
                 console.error('Login error:', err);
-                errorMsg.textContent = 'Email atau password salah. Untuk demo gunakan: admin@gmail.store / admin';
+                errorMsg.textContent = err.message || 'Email atau password salah.';
                 errorMsg.classList.remove('hidden');
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = 'Masuk';
