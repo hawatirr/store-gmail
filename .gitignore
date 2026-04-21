@@ -1,28 +1,45 @@
-# Examples 1:
-(empty — output nothing)
-
-# Example 2 (Project with artifacts):
-# Compiled and build artifacts
-*.pyc
-__pycache__/
-*.o
-*.obj
-dist/
-build/
+```
 # Dependencies
-.venv/
-venv/
 node_modules/
-# Logs and temp files
-*.log
-*.tmp
-*.swp
-# Environment
+
+# Environment variables
 .env
 .env.local
 .env.*
-# Editors
+
+# Logs
+*.log
+
+# IDE files
 .vscode/
 .idea/
 
-Final reminder: Output ONLY the .gitignore content. If nothing should be ignored, output NOTHING.
+# Python cache (if any Python files exist in backend)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Build outputs
+dist/
+build/
+*.min.js
+*.bundle.js
+
+# Temporary files
+*.tmp
+*.swp
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Coverage reports
+coverage/
+htmlcov/
+.coverage
+
+# Package manager
+package-lock.json
+```

@@ -133,61 +133,129 @@
     </main>
 
     <script>
-        // Supabase Init (Ganti dengan API Key Anda)
-        const supabase = supabase.createClient('URL_PROYEK', 'ANON_KEY');
+        // Backend API URL
+        const API_URL = 'http://localhost:3000/api';
+
+        // Check authentication on load
+        window.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('authToken');
+            const user = JSON.parse(localStorage.getItem('user'));
+            
+            if (!token || !user || user.role !== 'admin') {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            loadData();
+        });
 
         async function addBulkStock() {
             const type = document.getElementById('acc-type').value;
             const lines = document.getElementById('acc-data').value.split('\n');
+            const token = localStorage.getItem('authToken');
+            
             const dataToPush = lines.filter(line => line.trim() !== '').map(line => ({
-                category: type,
-                content: line,
-                is_sold: false
+                judul: `${type} Account`,
+                deskripsi: line,
+                kategori: type,
+                status: 'available'
             }));
 
-            const { error } = await supabase.from('gmail_stocks').insert(dataToPush);
-            if (!error) {
-                alert('Success added ' + dataToPush.length + ' accounts!');
-                location.reload();
-            } else {
-                alert('Error: ' + error.message);
+            if (dataToPush.length === 0) {
+                alert('Please enter at least one account');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/data`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(dataToPush[0]) // Send one at a time for simplicity
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert(`Success added ${dataToPush.length} accounts!`);
+                    location.reload();
+                } else {
+                    alert('Error: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Add stock error:', error);
+                alert('Connection error. Make sure backend is running.');
             }
         }
 
         async function loadData() {
-            const { data: stocks, error } = await supabase.from('gmail_stocks').select('*').limit(10).order('id', {ascending: false});
+            const token = localStorage.getItem('authToken');
             
-            if (error) {
-                console.error('Error loading data:', error);
-                return;
-            }
-
-            const list = document.getElementById('inventory-list');
-            if (stocks && stocks.length > 0) {
-                stocks.forEach(s => {
-                    list.innerHTML += `
-                        <tr class="hover:bg-white/5 transition">
-                            <td class="py-4 font-medium text-blue-400">${s.category}</td>
-                            <td class="py-4 font-mono text-xs text-gray-400">${s.content.substring(0,25)}...</td>
-                            <td class="py-4">
-                                <span class="px-2 py-1 rounded-lg text-xs ${s.is_sold ? 'bg-red-500/10 text-red-400' : 'bg-emerald-500/10 text-emerald-400'}">
-                                    ${s.is_sold ? 'Sold' : 'Ready'}
-                                </span>
-                            </td>
-                        </tr>
-                    `;
+            try {
+                const response = await fetch(`${API_URL}/data`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
                 });
-                document.getElementById('stat-stock').innerText = stocks.length;
+
+                const result = await response.json();
+                
+                if (!result.success) {
+                    console.error('Error loading data:', result.message);
+                    if (response.status === 401 || response.status === 403) {
+                        window.location.href = 'login.html';
+                    }
+                    return;
+                }
+
+                const list = document.getElementById('inventory-list');
+                const stocks = result.data;
+                
+                if (stocks && stocks.length > 0) {
+                    stocks.forEach(s => {
+                        list.innerHTML += `
+                            <tr class="hover:bg-white/5 transition">
+                                <td class="py-4 font-medium text-blue-400">${s.kategori || 'General'}</td>
+                                <td class="py-4 font-mono text-xs text-gray-400">${s.deskripsi ? s.deskripsi.substring(0,25) + '...' : 'N/A'}</td>
+                                <td class="py-4">
+                                    <span class="px-2 py-1 rounded-lg text-xs ${s.status === 'sold' ? 'bg-red-500/10 text-red-400' : 'bg-emerald-500/10 text-emerald-400'}">
+                                        ${s.status === 'sold' ? 'Sold' : 'Ready'}
+                                    </span>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                    document.getElementById('stat-stock').innerText = stocks.length;
+                }
+            } catch (error) {
+                console.error('Load data error:', error);
+                alert('Failed to load data. Make sure backend is running.');
             }
         }
 
-        function logout() {
-            supabase.auth.signOut().then(() => {
+        async function logout() {
+            const token = localStorage.getItem('authToken');
+            
+            try {
+                await fetch(`${API_URL}/logout`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ token })
+                });
+            } catch (error) {
+                console.error('Logout error:', error);
+            } finally {
+                // Clear local storage and redirect
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('user');
                 window.location.href = "login.html";
-            });
+            }
         }
-
-        loadData();
     </script>
 </body>
 </html>
