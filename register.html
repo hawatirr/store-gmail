@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Masuk - GMAIL.STORE</title>
+    <title>Daftar - GMAIL.STORE</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -59,14 +59,21 @@
                 Kembali
             </a>
             
-            <!-- Login Card -->
+            <!-- Register Card -->
             <div class="card p-8">
                 <div class="text-center mb-8">
-                    <h1 class="text-3xl font-bold mb-2">Selamat Datang</h1>
-                    <p class="text-gray-400 text-sm">Masuk untuk melanjutkan</p>
+                    <h1 class="text-3xl font-bold mb-2">Buat Akun</h1>
+                    <p class="text-gray-400 text-sm">Daftar untuk mulai berbelanja</p>
                 </div>
                 
-                <form id="loginForm" class="space-y-6">
+                <form id="registerForm" class="space-y-5">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Nama Lengkap</label>
+                        <input type="text" id="fullname" required 
+                            class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-blue-500 transition text-white placeholder-gray-500"
+                            placeholder="John Doe">
+                    </div>
+                    
                     <div>
                         <label class="block text-sm font-medium text-gray-300 mb-2">Email</label>
                         <input type="email" id="email" required 
@@ -76,32 +83,30 @@
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-300 mb-2">Password</label>
-                        <input type="password" id="password" required 
+                        <input type="password" id="password" required minlength="6"
                             class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-blue-500 transition text-white placeholder-gray-500"
-                            placeholder="••••••••">
+                            placeholder="Minimal 6 karakter">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Konfirmasi Password</label>
+                        <input type="password" id="confirmPassword" required 
+                            class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-blue-500 transition text-white placeholder-gray-500"
+                            placeholder="Ulangi password">
                     </div>
                     
                     <button type="submit" id="submitBtn" class="w-full btn-primary py-3 rounded-xl font-semibold text-white">
-                        Masuk
+                        Daftar
                     </button>
                 </form>
                 
                 <div id="errorMsg" class="hidden mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm text-center"></div>
+                <div id="successMsg" class="hidden mt-4 p-3 bg-green-500/10 border border-green-500/20 rounded-xl text-green-400 text-sm text-center"></div>
                 
                 <div class="mt-6 text-center">
                     <p class="text-sm text-gray-400">
-                        Belum punya akun? 
-                        <a href="register.html" class="text-blue-400 hover:text-blue-300 transition">Daftar</a>
-                    </p>
-                </div>
-                
-                <!-- Admin Note -->
-                <div class="mt-8 pt-6 border-t border-white/5">
-                    <p class="text-xs text-gray-500 text-center">
-                        <strong>Admin Login:</strong> admin@gmail.store / admin
-                    </p>
-                    <p class="text-xs text-gray-600 text-center mt-2">
-                        Link khusus admin: <a href="admin.html" class="text-blue-500/50 hover:text-blue-400 transition">admin.html</a>
+                        Sudah punya akun? 
+                        <a href="login.html" class="text-blue-400 hover:text-blue-300 transition">Masuk</a>
                     </p>
                 </div>
             </div>
@@ -115,43 +120,57 @@
         
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
+            const fullname = document.getElementById('fullname').value;
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
             const submitBtn = document.getElementById('submitBtn');
             const errorMsg = document.getElementById('errorMsg');
+            const successMsg = document.getElementById('successMsg');
+            
+            // Validasi password
+            if (password !== confirmPassword) {
+                errorMsg.textContent = 'Password tidak cocok!';
+                errorMsg.classList.remove('hidden');
+                successMsg.classList.add('hidden');
+                return;
+            }
             
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<span class="flex items-center justify-center"><svg class="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/></svg>Memproses...</span>';
             errorMsg.classList.add('hidden');
+            successMsg.classList.add('hidden');
             
             try {
-                // Coba login dengan Supabase Auth
-                const { data, error } = await supabase.auth.signInWithPassword({
+                // Daftar dengan Supabase Auth
+                const { data, error } = await supabase.auth.signUp({
                     email: email,
-                    password: password
+                    password: password,
+                    options: {
+                        data: {
+                            full_name: fullname
+                        }
+                    }
                 });
                 
                 if (error) throw error;
                 
-                // Simpan session
-                localStorage.setItem('user_session', JSON.stringify(data.user));
+                successMsg.textContent = 'Akun berhasil dibuat! Silakan cek email untuk verifikasi.';
+                successMsg.classList.remove('hidden');
                 
-                // Redirect berdasarkan role
-                if (email === 'admin@gmail.store') {
-                    window.location.href = 'admin.html';
-                } else {
-                    window.location.href = 'index.html';
-                }
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
                 
             } catch (err) {
-                console.error('Login error:', err);
-                errorMsg.textContent = 'Email atau password salah. Untuk demo gunakan: admin@gmail.store / admin';
+                console.error('Register error:', err);
+                errorMsg.textContent = err.message || 'Gagal membuat akun. Coba lagi.';
                 errorMsg.classList.remove('hidden');
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = 'Masuk';
+                submitBtn.innerHTML = 'Daftar';
             }
         });
     </script>

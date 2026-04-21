@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard — GMAIL.STORE</title>
+    <title>Dashboard Admin — GMAIL.STORE</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -133,35 +133,26 @@
     </main>
 
     <script>
-        // Mock API untuk kompatibilitas dengan GitHub Pages (tanpa backend server)
-        // Data disimpan di localStorage browser
+        // Konfigurasi Supabase - GANTI URL_PROYEK dengan ID proyek Supabase Anda
+        const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
+        const SUPABASE_KEY = 'sbp_8c81a6f19ca9616a47b83c8ae58f67d1e10d3c86';
         
-        const DEFAULT_DATA = [
-            { id: 1, judul: 'Gmail Premium', deskripsi: 'account1@gmail.com|pass123', kategori: 'Gmail', status: 'available' },
-            { id: 2, judul: 'Gmail Business', deskripsi: 'account2@gmail.com|pass456', kategori: 'Gmail', status: 'sold' },
-            { id: 3, judul: 'Outlook Pro', deskripsi: 'account3@outlook.com|pass789', kategori: 'Outlook', status: 'available' }
-        ];
-
-        // Initialize mock data if not exists
-        if (!localStorage.getItem('mockInventory')) {
-            localStorage.setItem('mockInventory', JSON.stringify(DEFAULT_DATA));
-        }
-
-        function getMockData() {
-            return JSON.parse(localStorage.getItem('mockInventory') || '[]');
-        }
-
-        function saveMockData(data) {
-            localStorage.setItem('mockInventory', JSON.stringify(data));
-        }
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         // Check authentication on load
-        window.addEventListener('DOMContentLoaded', () => {
-            const token = localStorage.getItem('authToken');
-            const user = JSON.parse(localStorage.getItem('user'));
+        window.addEventListener('DOMContentLoaded', async () => {
+            // Cek session Supabase
+            const { data: { session } } = await supabase.auth.getSession();
             
-            if (!token || !user || user.role !== 'admin') {
+            if (!session) {
                 window.location.href = 'login.html';
+                return;
+            }
+            
+            // Cek apakah admin
+            if (session.user.email !== 'admin@gmail.store') {
+                alert('Akses ditolak. Hanya admin yang dapat mengakses halaman ini.');
+                window.location.href = 'index.html';
                 return;
             }
             
@@ -173,11 +164,11 @@
             const lines = document.getElementById('acc-data').value.split('\n');
             
             const dataToPush = lines.filter(line => line.trim() !== '').map((line, index) => ({
-                id: Date.now() + index,
-                judul: `${type} Account`,
-                deskripsi: line.trim(),
-                kategori: type,
-                status: 'available'
+                name: `${type} Account`,
+                description: line.trim(),
+                price: type === 'Fresh' ? 50000 : 120000,
+                stock: 1,
+                category: type
             }));
 
             if (dataToPush.length === 0) {
@@ -185,49 +176,59 @@
                 return;
             }
 
-            // Get existing data and add new items
-            const existingData = getMockData();
-            const updatedData = [...existingData, ...dataToPush];
-            saveMockData(updatedData);
-
-            alert(`Success added ${dataToPush.length} accounts!`);
-            location.reload();
+            try {
+                // Insert ke Supabase
+                const { data, error } = await supabase.from('products').insert(dataToPush);
+                
+                if (error) throw error;
+                
+                alert(`Success added ${dataToPush.length} accounts!`);
+                location.reload();
+            } catch (err) {
+                console.error('Error adding stock:', err);
+                alert('Gagal menambahkan stok. Pastikan tabel products sudah dibuat di Supabase.');
+            }
         }
 
         async function loadData() {
-            const stocks = getMockData();
-            
-            const list = document.getElementById('inventory-list');
-            
-            if (stocks && stocks.length > 0) {
-                stocks.forEach(s => {
-                    const descPreview = s.deskripsi ? s.deskripsi.substring(0, 25) + '...' : 'N/A';
-                    const statusClass = s.status === 'sold' ? 'bg-red-500/10 text-red-400' : 'bg-emerald-500/10 text-emerald-400';
-                    const statusText = s.status === 'sold' ? 'Sold' : 'Ready';
-                    
-                    list.innerHTML += `
-                        <tr class="hover:bg-white/5 transition">
-                            <td class="py-4 font-medium text-blue-400">${s.kategori || 'General'}</td>
-                            <td class="py-4 font-mono text-xs text-gray-400">${descPreview}</td>
-                            <td class="py-4">
-                                <span class="px-2 py-1 rounded-lg text-xs ${statusClass}">
-                                    ${statusText}
-                                </span>
-                            </td>
-                        </tr>
-                    `;
-                });
-                document.getElementById('stat-stock').innerText = stocks.length;
-            } else {
-                list.innerHTML = '<tr><td colspan="3" class="py-8 text-center text-gray-400">No inventory yet</td></tr>';
-                document.getElementById('stat-stock').innerText = '0';
+            try {
+                const { data: stocks, error } = await supabase.from('products').select('*');
+                
+                if (error) throw error;
+                
+                const list = document.getElementById('inventory-list');
+                
+                if (stocks && stocks.length > 0) {
+                    stocks.forEach(s => {
+                        const descPreview = s.description ? s.description.substring(0, 25) + '...' : 'N/A';
+                        const statusClass = s.stock === 0 ? 'bg-red-500/10 text-red-400' : 'bg-emerald-500/10 text-emerald-400';
+                        const statusText = s.stock === 0 ? 'Sold Out' : 'Ready';
+                        
+                        list.innerHTML += `
+                            <tr class="hover:bg-white/5 transition">
+                                <td class="py-4 font-medium text-blue-400">${s.category || s.name}</td>
+                                <td class="py-4 font-mono text-xs text-gray-400">${descPreview}</td>
+                                <td class="py-4">
+                                    <span class="px-2 py-1 rounded-lg text-xs ${statusClass}">
+                                        ${statusText}
+                                    </span>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                    document.getElementById('stat-stock').innerText = stocks.reduce((sum, s) => sum + (s.stock || 0), 0);
+                } else {
+                    list.innerHTML = '<tr><td colspan="3" class="py-8 text-center text-gray-400">No inventory yet</td></tr>';
+                    document.getElementById('stat-stock').innerText = '0';
+                }
+            } catch (err) {
+                console.error('Error loading data:', err);
+                document.getElementById('inventory-list').innerHTML = '<tr><td colspan="3" class="py-8 text-center text-red-400">Gagal memuat data. Pastikan tabel products sudah dibuat.</td></tr>';
             }
         }
 
         async function logout() {
-            // Clear local storage and redirect
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('user');
+            await supabase.auth.signOut();
             window.location.href = "login.html";
         }
     </script>
